@@ -28,7 +28,7 @@ CONTEXT:
 """.strip()
 
 
-def retrieve_documents(query, index_name="course-questions", max_results=5):
+def retrieve_documents(query, course, index_name="course-questions", max_results=5):
     es = Elasticsearch("http://localhost:9200")
 
     search_query = {
@@ -42,7 +42,7 @@ def retrieve_documents(query, index_name="course-questions", max_results=5):
                         "type": "best_fields",
                     }
                 },
-                "filter": {"term": {"course": "data-engineering-zoomcamp"}},
+                "filter": {"term": {"course": course}},
             }
         },
     }
@@ -76,8 +76,8 @@ def ask_openai(prompt, model="gpt-3.5-turbo"):
     return answer
 
 
-def qa_bot(user_question):
-    context_docs = retrieve_documents(user_question)
+def qa_bot(user_question, course):
+    context_docs = retrieve_documents(user_question, course)
     prompt = build_prompt(user_question, context_docs)
     answer = ask_openai(prompt)
     return answer
